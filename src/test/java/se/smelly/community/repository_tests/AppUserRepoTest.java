@@ -26,7 +26,14 @@ public class AppUserRepoTest {
 
     @Before
     public void before(){
-        AppUser testUser = new AppUser("test@test.com",  Role.USER, "Test", "Testsson", LocalDate.parse("2019-03-15"), "123456");
+        AppUser testUser = new AppUser.Builder(LocalDate.parse("2019-03-15"))
+                .withEmail("test@test.com")
+                .asRole(Role.USER)
+                .firstName("Test")
+                .lastName("Testsson")
+                .password("123456")
+                .build();
+
         this.testUser = testRepo.save(testUser).block();
     }
 
@@ -92,8 +99,4 @@ public class AppUserRepoTest {
                 .expectNextMatches(x -> x.getRegDate().equals(regDate))
                 .verifyComplete();
     }
-
-
-
-
 }

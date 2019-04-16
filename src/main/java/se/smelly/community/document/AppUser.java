@@ -13,6 +13,60 @@ import java.util.Objects;
 @Document
 public class AppUser {
 
+
+    public static class Builder{
+        private String email;
+        private Role role;
+        private String firstName;
+        private String lastName;
+        private LocalDate regDate;
+        private String password;
+        private boolean active;
+
+        public Builder(LocalDate regDate){
+            this.active = true;
+            this.role = Role.USER;
+            this.regDate = regDate;
+        }
+        public Builder withEmail(String email){
+            this.email = email;
+            return this;
+        }
+        public Builder asRole(Role role){
+            this.role = role;
+            return this;
+        }
+        public Builder firstName(String firstName){
+            this.firstName = firstName;
+            return this;
+        }
+        public Builder lastName(String lastName){
+            this.lastName = lastName;
+            return this;
+        }
+        public Builder password(String password){
+            this.password = password;
+            return this;
+        }
+        public Builder setActiveStatus(boolean status){
+            this.active = active;
+            return this;
+        }
+        public AppUser build(){
+            AppUser user = new AppUser(this.regDate);
+            user.setActive(active);
+            user.setEmail(email);
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setPassword(password);
+            user.setRole(role);
+
+            return user;
+        }
+
+
+    }
+
     @Id
     private String id;
     @Indexed
@@ -46,6 +100,10 @@ public class AppUser {
         this.lastName = lastName;
         this.password = password;
         this.regDate = LocalDate.now();
+    }
+
+    private AppUser(LocalDate regDate){
+        this.regDate = regDate;
     }
 
     protected AppUser(){}
