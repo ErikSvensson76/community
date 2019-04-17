@@ -15,6 +15,7 @@ public class AppUser {
 
 
     public static class Builder{
+        private String id;
         private String email;
         private Role role;
         private String firstName;
@@ -52,15 +53,15 @@ public class AppUser {
             this.active = active;
             return this;
         }
-        public AppUser build(){
-            AppUser user = new AppUser(this.regDate);
-            user.setActive(active);
-            user.setEmail(email);
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setPassword(password);
-            user.setRole(role);
 
+        public Builder setId(String id){
+            this.id = id;
+            return this;
+        }
+
+        public AppUser build(){
+            AppUser user = new AppUser(id, email, role, firstName, lastName, regDate, password);
+            user.setActive(active);
             return user;
         }
 
