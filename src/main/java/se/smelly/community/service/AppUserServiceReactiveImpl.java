@@ -16,8 +16,8 @@ import java.time.LocalDate;
 @Service
 public class AppUserServiceReactiveImpl implements AppUserService {
 
-    public AppUserRepo appUserRepo;
-    public Converters converters;
+    private AppUserRepo appUserRepo;
+    private Converters converters;
 
     @Autowired
     public AppUserServiceReactiveImpl(AppUserRepo appUserRepo, Converters converters) {
