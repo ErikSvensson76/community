@@ -1,5 +1,6 @@
 package se.smelly.community.service;
 
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import se.smelly.community.dto.AppUserDto;
@@ -24,5 +25,5 @@ public interface AppUserService {
 
     Flux<AppUserDto> findByRegDate(Mono<LocalDate> regDate);
 
-    Mono<AppUserDto> save(Mono<AppUserDto> toSave);
+    Flux<AppUserDto> save(Publisher<AppUserDto> toSave);
 }

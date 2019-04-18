@@ -1,6 +1,7 @@
 package se.smelly.community.service;
 
 
+import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -66,9 +67,9 @@ public class AppUserServiceReactiveImpl implements AppUserService {
     }
 
     @Override
-    public Mono<AppUserDto> save(Mono<AppUserDto> toSave){
-        return Mono.from(appUserRepo
+    public Flux<AppUserDto> save(Publisher<AppUserDto> toSave){
+        return Flux.from(appUserRepo
                 .saveAll(converters.convertDtoToAppUser(toSave)))
-                .flatMap(x -> converters.convertAppUserToDto(Mono.just(x))).single();
+                .flatMap(x -> converters.convertAppUserToDto(Flux.just(x)));
     }
 }
