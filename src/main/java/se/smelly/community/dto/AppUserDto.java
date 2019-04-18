@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import se.smelly.community.security.Role;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class AppUserDto {
 
@@ -94,5 +95,25 @@ public class AppUserDto {
     @JsonIgnore
     public String getPassword(){
         return this.password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AppUserDto that = (AppUserDto) o;
+        return active == that.active &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(email, that.email) &&
+                role == that.role &&
+                Objects.equals(firstName, that.firstName) &&
+                Objects.equals(lastName, that.lastName) &&
+                Objects.equals(regDate, that.regDate) &&
+                Objects.equals(password, that.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, role, firstName, lastName, regDate, active, password);
     }
 }

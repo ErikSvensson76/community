@@ -50,7 +50,7 @@ public class AppUser {
             return this;
         }
         public Builder setActiveStatus(boolean status){
-            this.active = active;
+            this.active = status;
             return this;
         }
 
@@ -60,8 +60,7 @@ public class AppUser {
         }
 
         public AppUser build(){
-            AppUser user = new AppUser(id, email, role, firstName, lastName, regDate, password);
-            user.setActive(active);
+            AppUser user = new AppUser(id, email, role, firstName, lastName, regDate, password, active);
             return user;
         }
 
@@ -81,29 +80,21 @@ public class AppUser {
     @JsonIgnore
     private String password;
     @Indexed
-    private boolean active = true;
+    private boolean active;
 
-    @PersistenceConstructor
-    public AppUser(String id, String email, Role role, String firstName, String lastName, LocalDate regDate, String password) {
-        this(email, role, firstName, lastName, regDate, password);
+
+    public AppUser(String id, String email, Role role, String firstName, String lastName, LocalDate regDate, String password, boolean active) {
+        this(email, role, firstName, lastName, regDate, password, active);
         this.id = id;
     }
 
-    public AppUser(String email, Role role, String firstName, String lastName, LocalDate regDate, String password) {
-        this(email, firstName, lastName, password);
-        this.role = role;
-        this.regDate = regDate;
-    }
-
-    public AppUser(String email, String firstName, String lastName, String password) {
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.password = password;
-        this.regDate = LocalDate.now();
-    }
-
-    private AppUser(LocalDate regDate){
+    public AppUser(String email, Role role, String firstName, String lastName, LocalDate regDate, String password, boolean active) {
+        setEmail(email);
+        setFirstName(firstName);
+        setLastName(lastName);
+        setPassword(password);
+        this.active = active;
+        setRole(role);
         this.regDate = regDate;
     }
 

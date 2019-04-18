@@ -19,7 +19,7 @@ public class Converters {
                         x.getEmail(),
                         x.getRole(),
                         x.getFirstName(),
-                        x.getFirstName(),
+                        x.getLastName(),
                         x.getRegDate(),
                         x.isActive(),
                         x.getPassword())));
