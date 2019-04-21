@@ -118,6 +118,7 @@ public class ConvertersTest {
 
         StepVerifier.create(result)
                 .expectNext(firstAppUser)
-                .expectNext(secondAppUser);
+                .expectNext(secondAppUser)
+                .verifyComplete();
     }
 }
