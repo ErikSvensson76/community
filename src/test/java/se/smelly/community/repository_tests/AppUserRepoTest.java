@@ -27,8 +27,8 @@ public class AppUserRepoTest {
     @Before
     public void before(){
         AppUser testUser = new AppUser.Builder(LocalDate.parse("2019-03-15"))
-                .withEmail("test@test.com")
-                .asRole(Role.USER)
+                .email("test@test.com")
+                .role(Role.USER)
                 .firstName("Test")
                 .lastName("Testsson")
                 .password("123456")

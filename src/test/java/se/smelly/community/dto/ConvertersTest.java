@@ -1,6 +1,5 @@
 package se.smelly.community.dto;
 
-import net.bytebuddy.asm.Advice;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,8 +15,6 @@ import se.smelly.community.document.AppUser;
 import se.smelly.community.security.Role;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
 
 
 @RunWith(SpringRunner.class)
@@ -44,11 +41,11 @@ public class ConvertersTest {
         this.firstAppUser = new AppUser.Builder(LocalDate.parse("2019-04-18"))
                 .lastName("Testsson")
                 .firstName("Test1")
-                .asRole(Role.USER)
-                .withEmail("test@test.com")
-                .setId("test1")
+                .role(Role.USER)
+                .email("test@test.com")
+                .id("test1")
                 .password("password")
-                .setActiveStatus(false)
+                .active(false)
                 .build();
 
         this.firstAppUserDto = new AppUserDto();
@@ -64,11 +61,11 @@ public class ConvertersTest {
         this.secondAppUser = new AppUser.Builder(LocalDate.parse("2019-04-17"))
                 .lastName("Testsson2")
                 .firstName("Test2")
-                .asRole(Role.ADMIN)
-                .withEmail("test2@test.com")
-                .setId("test2")
+                .role(Role.ADMIN)
+                .email("test2@test.com")
+                .id("test2")
                 .password("password")
-                .setActiveStatus(true)
+                .active(true)
                 .build();
 
         this.secondAppUserDto = new AppUserDto();

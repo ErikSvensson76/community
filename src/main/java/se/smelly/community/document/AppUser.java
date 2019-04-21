@@ -2,7 +2,6 @@ package se.smelly.community.document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import se.smelly.community.security.Role;
@@ -29,11 +28,11 @@ public class AppUser {
             this.role = Role.USER;
             this.regDate = regDate;
         }
-        public Builder withEmail(String email){
+        public Builder email (String email){
             this.email = email;
             return this;
         }
-        public Builder asRole(Role role){
+        public Builder role(Role role){
             this.role = role;
             return this;
         }
@@ -49,12 +48,12 @@ public class AppUser {
             this.password = password;
             return this;
         }
-        public Builder setActiveStatus(boolean status){
+        public Builder active(boolean status){
             this.active = status;
             return this;
         }
 
-        public Builder setId(String id){
+        public Builder id(String id){
             this.id = id;
             return this;
         }

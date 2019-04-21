@@ -1,7 +1,6 @@
 package se.smelly.community.dto;
 
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -41,13 +40,13 @@ public class Converters {
 
     public Publisher<AppUser> convertDtoToAppUser(Publisher<AppUserDto> appUserDtoPublisher){
         return Flux.from(appUserDtoPublisher).flatMap(x -> Mono.just(new AppUser.Builder(x.getRegDate())
-                    .asRole(x.getRole())
+                    .role(x.getRole())
                     .firstName(x.getFirstName())
                     .lastName(x.getLastName())
-                    .withEmail(x.getEmail())
-                    .setActiveStatus(x.isActive())
+                    .email(x.getEmail())
+                    .active(x.isActive())
                     .password(x.getPassword())
-                    .setId(x.getId())
+                    .id(x.getId())
                     .build()));
     }
 }
