@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -92,7 +93,7 @@ public class AppUserServiceReactiveImplTest {
         when(appUserRepo.findByEmailIgnoreCase(param)).thenReturn(Mono.just(firstAppUser));
         when(converters.convertAppUserToDto(any(Publisher.class))).thenReturn(Mono.just(firstAppUserDto));
 
-        Mono<AppUserDto> result = appUserService.findByEmail(param);
+        Mono<AppUserDto> result = appUserService.findByEmail(param).log();
 
         StepVerifier.create(result)
                 .expectNext(firstAppUserDto)
@@ -123,16 +124,6 @@ public class AppUserServiceReactiveImplTest {
                 .verifyComplete();
     }
 
-    @Test
-    public void getAll() {
-        when(appUserRepo.findAll()).thenReturn(Flux.just(firstAppUser, secondAppUser));
-
-        StepVerifier.create(appUserService.getAll())
-                .expectNext(firstAppUserDto)
-                .expectNext(secondAppUserDto)
-                .expectComplete();
-    }
-
 
     @Test
     public void findByActiveStatus() {
@@ -141,7 +132,7 @@ public class AppUserServiceReactiveImplTest {
         when(appUserRepo.findByActive(booleanMono)).thenReturn(Flux.just(firstAppUser));
         when(converters.convertAppUserToDto(any(Publisher.class))).thenReturn(Flux.just(firstAppUserDto));
 
-        StepVerifier.create(appUserService.findByActiveStatus(booleanMono))
+        StepVerifier.create(appUserService.findByActiveStatus(booleanMono).log())
                 .expectNext(firstAppUserDto)
                 .verifyComplete();
     }
@@ -149,12 +140,13 @@ public class AppUserServiceReactiveImplTest {
     @Test
     public void findByRegDateBefore() {
         Mono<LocalDate> localDateMono = Mono.just(LocalDate.parse("2019-04-21"));
+        Flux<AppUserDto> expected = Flux.just(firstAppUserDto, secondAppUserDto);
 
         when(appUserRepo.findByRegDateBefore(localDateMono)).thenReturn(Flux.just(firstAppUser, secondAppUser));
-        when(converters.convertAppUserToDto(any(Publisher.class))).thenReturn(Flux.just(firstAppUserDto, secondAppUserDto));
+        when(converters.convertAppUserToDto(any(Publisher.class))).thenReturn(expected);
 
-        StepVerifier.create(appUserService.findByRegDateBefore(localDateMono))
-                .thenConsumeWhile(x -> x.getRegDate().isBefore(LocalDate.parse("2019-04-21")))
+        StepVerifier.create(appUserService.findByRegDateBefore(localDateMono).log())
+                .expectNext(firstAppUserDto, secondAppUserDto)
                 .verifyComplete();
     }
 
@@ -181,18 +173,5 @@ public class AppUserServiceReactiveImplTest {
         StepVerifier.create(appUserService.findByRegDate(localDateMono))
                 .thenConsumeWhile(x -> x.getRegDate().equals(LocalDate.parse("2019-04-17")))
                 .verifyComplete();
-    }
-
-    @Test
-    public void save() {
-        Publisher<AppUserDto> toSavePublisher = Flux.just(firstAppUserDto, secondAppUserDto);
-        when(converters.convertDtoToAppUser(any(Publisher.class))).thenReturn(Flux.just(firstAppUser, secondAppUser));
-        when(appUserRepo.saveAll(any(Publisher.class))).thenReturn(Flux.just(firstAppUser, secondAppUser));
-
-
-        StepVerifier.create(appUserService.save(toSavePublisher))
-                .expectNext(firstAppUserDto)
-                .expectNext(secondAppUserDto)
-                .expectComplete();
     }
 }

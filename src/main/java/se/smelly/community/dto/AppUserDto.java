@@ -116,4 +116,13 @@ public class AppUserDto {
     public int hashCode() {
         return Objects.hash(id, email, role, firstName, lastName, regDate, active, password);
     }
+
+    @Override
+    public String toString() {
+        return "AppUserDto{" +
+                "id='" + id + '\'' +
+                ", email='" + email + '\'' +
+                ", regDate=" + regDate +
+                '}';
+    }
 }

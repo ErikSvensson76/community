@@ -16,5 +16,6 @@ public interface AppUserRepo extends ReactiveMongoRepository<AppUser, String> {
     Flux<AppUser> findByRegDateBefore(Mono<LocalDate> regDate);
     Flux<AppUser> findByRegDateAfter(Mono<LocalDate> regDate);
     Flux<AppUser> findByRegDate(Mono<LocalDate> regDate);
+    Flux<AppUser> findAll();
 
 }

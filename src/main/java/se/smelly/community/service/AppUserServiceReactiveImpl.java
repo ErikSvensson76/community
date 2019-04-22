@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import se.smelly.community.document.AppUser;
 import se.smelly.community.dto.AppUserDto;
 import se.smelly.community.dto.Converters;
 import se.smelly.community.repository.AppUserRepo;
@@ -27,38 +28,44 @@ public class AppUserServiceReactiveImpl implements AppUserService {
 
     @Override
     public Mono<AppUserDto> findByEmail(Mono<String> email){
-        return Mono.from(converters.convertAppUserToDto(appUserRepo.findByEmailIgnoreCase(email)));
+        Mono<AppUser> result = Mono.from(appUserRepo.findByEmailIgnoreCase(email));
+        return Mono.from(converters.convertAppUserToDto(result));
     }
 
     @Override
     public Mono<AppUserDto> findById(Mono<String> id){
-        return Mono.from(converters.convertAppUserToDto(appUserRepo.findById(id)));
+        Mono<AppUser> result = Mono.from(appUserRepo.findById(id));
+        return Mono.from(converters.convertAppUserToDto(result));
     }
 
     @Override
     public Flux<AppUserDto> findByRole(Mono<Role> role){
-        return Flux.from(appUserRepo.findByRole(role)
-                .flatMap(x -> converters.convertAppUserToDto(Mono.just(x))));
+        Flux<AppUser> result = appUserRepo.findByRole(role);
+        return Flux.from(converters.convertAppUserToDto(result));
     }
 
     @Override
     public Flux<AppUserDto> getAll(){
-        return Flux.from(appUserRepo.findAll().flatMap(x -> converters.convertAppUserToDto(Mono.just(x))));
+        Flux<AppUser> result = appUserRepo.findAll();
+        return Flux.from(converters.convertAppUserToDto(result));
     }
 
     @Override
     public Flux<AppUserDto> findByActiveStatus(Mono<Boolean> isActive){
-        return Flux.from(appUserRepo.findByActive(isActive).flatMap(x -> converters.convertAppUserToDto(Mono.just(x))));
+        Flux<AppUser> result = appUserRepo.findByActive(isActive);
+        return Flux.from(converters.convertAppUserToDto(result));
     }
 
     @Override
     public Flux<AppUserDto> findByRegDateBefore(Mono<LocalDate> regDate){
-        return Flux.from(appUserRepo.findByRegDateBefore(regDate).flatMap(x -> converters.convertAppUserToDto(Mono.just(x))));
+        Flux<AppUser> result = appUserRepo.findByRegDateBefore(regDate);
+        return Flux.from(converters.convertAppUserToDto(result));
     }
 
     @Override
     public Flux<AppUserDto> findByRegDateAfter(Mono<LocalDate> regDate){
-        return Flux.from(appUserRepo.findByRegDateAfter(regDate).flatMap(x -> converters.convertAppUserToDto(Mono.just(x))));
+        Flux<AppUser> result = appUserRepo.findByRegDateAfter(regDate);
+        return Flux.from(converters.convertAppUserToDto(result));
     }
 
     @Override
@@ -68,8 +75,8 @@ public class AppUserServiceReactiveImpl implements AppUserService {
 
     @Override
     public Flux<AppUserDto> save(Publisher<AppUserDto> toSave){
-        return Flux.from(appUserRepo
-                .saveAll(converters.convertDtoToAppUser(toSave)))
-                .flatMap(x -> converters.convertAppUserToDto(Flux.just(x)));
+        Publisher<AppUser> convertToSave = converters.convertDtoToAppUser(toSave);
+        Publisher<AppUser> result = appUserRepo.saveAll(convertToSave);
+        return Flux.from(converters.convertAppUserToDto(result));
     }
 }
