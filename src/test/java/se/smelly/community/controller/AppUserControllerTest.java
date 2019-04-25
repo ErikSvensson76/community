@@ -1,5 +1,6 @@
 package se.smelly.community.controller;
 
+import net.bytebuddy.asm.Advice;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +17,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 import se.smelly.community.document.AppUser;
 import se.smelly.community.dto.AppUserDto;
 import se.smelly.community.repository.AppUserRepo;
@@ -48,8 +51,6 @@ public class AppUserControllerTest {
 
     @Autowired private WebTestClient webTestClient;
 
-    @Autowired private AppUserController appUserController;
-
     @Autowired private AppUserRepo appUserRepo;
 
     @Before
@@ -62,7 +63,7 @@ public class AppUserControllerTest {
 
     @Test
     public void getByEmail() {
-        webTestClient.get().uri("/user/" + "erik@gmail.com")
+        webTestClient.get().uri("/user/email"+"?email=erik@gmail.com")
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -72,9 +73,98 @@ public class AppUserControllerTest {
 
     @Test
     public void getByEmail_notFound(){
+        webTestClient.get().uri("/user/email"+"?email=invalid")
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8);
+    }
+
+    @Test
+    public void getAll(){
+        Flux<AppUserDto> result = webTestClient.get().uri("/user/all")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .returnResult(AppUserDto.class)
+                .getResponseBody();
+
+        StepVerifier.create(result)
+                .expectSubscription()
+                .expectNextCount(6)
+                .verifyComplete();
+    }
+
+    @Test
+    public void getById(){
+        webTestClient.get().uri("/user/" + "testId")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                .expectBody(AppUserDto.class)
+                .value(appUserDto -> appUserDto.getId().equals("testId"));
+    }
+
+    @Test
+    public void getById_notFound(){
         webTestClient.get().uri("/user/" + "invalid")
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8);
     }
+
+    @Test
+    public void addNewAppUser_created(){
+        //String id, String email, Role role, String firstName, String lastName, LocalDate regDate, boolean active, String password
+        AppUserDto formData = new AppUserDto(null, "rolf.andersson@gmail.com", Role.USER, "Rolf", "Andersson", null, true, "password");
+
+        webTestClient.post().uri("/user")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(formData), AppUserDto.class)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody()
+                .jsonPath("$.id").isNotEmpty()
+                .jsonPath("$.email").isEqualTo("rolf.andersson@gmail.com")
+                .jsonPath("$.role").isEqualTo("USER")
+                .jsonPath("$.firstName").isEqualTo("Rolf")
+                .jsonPath("$.lastName").isEqualTo("Andersson")
+                .jsonPath("$.regDate").isEqualTo(LocalDate.now().toString())
+                .jsonPath("$.active").isEqualTo(true)
+                .jsonPath("$.password").doesNotExist();
+    }
+
+    @Test
+    public void addNewAppUser_badRequest(){
+        //String id, String email, Role role, String firstName, String lastName, LocalDate regDate, boolean active, String password
+        AppUserDto formData = new AppUserDto(null, "rolf.andersson", Role.USER, "Rolf", "Andersson", null, true, "pass");
+
+        webTestClient.post().uri("/user")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(formData), AppUserDto.class)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    public void testUpdateAppUser_ok(){
+        //String id, String email, Role role, String firstName, String lastName, LocalDate regDate, boolean active, String password
+        AppUserDto updated = new AppUserDto("testId", "erik.svensson@gmail.com", Role.ADMIN, "Erik", "Svensson", LocalDate.parse("2017-01-23"), false, "password");
+
+        webTestClient.put().uri("/user")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .body(Mono.just(updated), AppUserDto.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("$.email").isEqualTo("erik.svensson@gmail.com")
+                .jsonPath("$.lastName").isEqualTo("Svensson");
+    }
+
+
+
+
+
+
+
+
 }

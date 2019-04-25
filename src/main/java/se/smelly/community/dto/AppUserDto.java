@@ -4,18 +4,31 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import se.smelly.community.security.Role;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Objects;
 
 public class AppUserDto {
 
+
     private String id;
+    @Email
     private String email;
+    @NotNull
     private Role role;
+    @NotBlank
+    @Size(min = 2)
     private String firstName;
+    @NotBlank
+    @Size(min = 2)
     private String lastName;
     private LocalDate regDate;
     private boolean active;
+
+    @Size(min = 7)
     private String password;
 
     public AppUserDto(){}
